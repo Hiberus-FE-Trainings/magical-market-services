@@ -1,0 +1,10 @@
+@api = http://localhost:8000
+
+POST {{api}}/mages
+Content-Type: application/json
+
+{
+    "name": "Harry Potter",
+    "email": "harry.potter@hogwarts",
+    "house": "Ravenclaw"
+}
