@@ -1,5 +1,5 @@
 import { Context } from "oak/mod.ts";
-import { ContextWithParams, MageFromRequest, NewMageEntry } from "../types.ts";
+import { ContextWithParams } from "../types.ts";
 import { magesService } from "../services/magesService.ts";
 
 export const magesController = {
@@ -46,6 +46,19 @@ export const magesController = {
 
       ctx.response.status = 200;
       ctx.response.body = updatedMage;
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = { message: `${error}` };
+      return;
+    }
+  },
+  deleteMage: (ctx: Context & ContextWithParams) => {
+    try {
+      const mageId = ctx.params.id;
+      magesService.deleteMageById(mageId);
+
+      ctx.response.status = 200;
+      ctx.response.body = `Mage with id: ${mageId} has been susscesfully deleted!`;
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = { message: `${error}` };

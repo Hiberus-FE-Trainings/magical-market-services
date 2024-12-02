@@ -1,5 +1,8 @@
+import { ScanCommand } from "dynamodb";
 import { Mage, MageFromRequest } from "../types.ts";
+import { unmarshall } from "dynamodbUtil";
 import { toNewMageEntry, toUpdatedMageEntry } from "../validations/validations.ts";
+import DynamodbClient from "../db/db.ts";
 
 const mages: Mage[] = [
   {
@@ -32,7 +35,14 @@ const mages: Mage[] = [
 ];
 
 export const magesService = {
-  getMages: (): Mage[] => mages,
+  getMages: async (): Promise<Mage[]> => {
+    const command = new ScanCommand({
+      TableName: "Mages",
+    });
+    const data = await DynamodbClient.send(command);
+    console.log(data.Items?.map((item) => unmarshall(item)));
+    return mages;
+  },
 
   getMageById: (id: string | undefined): Mage | undefined => mages.find((mage) => mage.id === id),
 
@@ -54,5 +64,11 @@ export const magesService = {
     mages.splice(index, 1);
     mages.push(updatedMage);
     return updatedMage;
+  },
+  deleteMageById: (id: string | undefined): void | undefined => {
+    const mageById = magesService.getMageById(id);
+    if (!mageById) throw new Error(`No mage has been found by id:${id}`);
+    const index = mages.indexOf(mageById);
+    mages.splice(index, 1);
   },
 };
