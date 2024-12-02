@@ -1,8 +1,11 @@
-import { ScanCommand } from "dynamodb";
+import { ScanCommand,  GetItemCommand} from "dynamodb";
 import { Mage, MageFromRequest } from "../types.ts";
-import { unmarshall } from "dynamodbUtil";
-import { toNewMageEntry, toUpdatedMageEntry } from "../validations/validations.ts";
+import {
+  toNewMageEntry,
+  toUpdatedMageEntry,
+} from "../validations/validations.ts";
 import DynamodbClient from "../db/db.ts";
+import { cleanItems, cleanItem } from "../utils/utils.ts";
 
 const mages: Mage[] = [
   {
@@ -40,11 +43,23 @@ export const magesService = {
       TableName: "Mages",
     });
     const data = await DynamodbClient.send(command);
-    console.log(data.Items?.map((item) => unmarshall(item)));
-    return mages;
+    return cleanItems(data.Items as Mage[]);
   },
 
-  getMageById: (id: string | undefined): Mage | undefined => mages.find((mage) => mage.id === id),
+  getMageById: async (id: string | undefined): Promise<Mage> =>{
+    console.log(id)
+    const command = new ScanCommand({
+        TableName: "Mages",
+        FilterExpression: "id = :id",
+      ExpressionAttributeValues: {
+        ":id": { S: id },
+      },
+      });
+      const data = await DynamodbClient.send(command);
+
+      return cleanItems(data.Items as Mage[])[0];
+
+},
 
   createMage: (mage: MageFromRequest): Mage => {
     const newMage: Mage = {
@@ -56,8 +71,13 @@ export const magesService = {
     };
     return newMage;
   },
-  updateMageById: (mageFromRequest: MageFromRequest, id: string | undefined): Mage => {
-    const mageById = magesService.getMageById(id);
+
+
+  updateMageById: async (
+    mageFromRequest: MageFromRequest,
+    id: string | undefined,
+  ): Promise<Mage> => {
+    const mageById = await magesService.getMageById(id);
     if (!mageById) throw new Error(`No mage has been found by id:${id}`);
     const updatedMage = toUpdatedMageEntry(mageFromRequest, mageById);
     const index = mages.indexOf(mageById);
@@ -65,8 +85,8 @@ export const magesService = {
     mages.push(updatedMage);
     return updatedMage;
   },
-  deleteMageById: (id: string | undefined): void | undefined => {
-    const mageById = magesService.getMageById(id);
+  deleteMageById: async (id: string | undefined) => {
+    const mageById = await magesService.getMageById(id);
     if (!mageById) throw new Error(`No mage has been found by id:${id}`);
     const index = mages.indexOf(mageById);
     mages.splice(index, 1);

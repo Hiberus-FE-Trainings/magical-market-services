@@ -3,17 +3,21 @@ import { ContextWithParams } from "../types.ts";
 import { magesService } from "../services/magesService.ts";
 
 export const magesController = {
-  getAllMages: (ctx: Context) => {
-    const mages = magesService.getMages();
+  getAllMages: async (ctx: Context) => {
+    const mages = await magesService.getMages();
+
+    console.log(mages);
 
     ctx.response.status = 200;
     ctx.response.body = mages;
   },
 
-  getMage: (ctx: Context & ContextWithParams) => {
+  getMage: async(ctx: Context & ContextWithParams) => {
     const mageId = ctx.params.id;
 
-    const mage = magesService.getMageById(mageId);
+    const mage = await magesService.getMageById(mageId);
+
+    console.log(mage)
 
     if (!mage) {
       ctx.response.status = 404;
@@ -58,7 +62,8 @@ export const magesController = {
       magesService.deleteMageById(mageId);
 
       ctx.response.status = 200;
-      ctx.response.body = `Mage with id: ${mageId} has been susscesfully deleted!`;
+      ctx.response.body =
+        `Mage with id: ${mageId} has been susscesfully deleted!`;
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = { message: `${error}` };
