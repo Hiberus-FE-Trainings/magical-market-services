@@ -1,6 +1,10 @@
 import { Item } from "../types.ts"
+import { client } from "../db/index.ts"
+import { ScanCommand } from "client-dynamodb"
+import { unmarshall } from "util-dynamodb"
+import { unmarshallDataFromDB } from "../utils/utils.ts"
 
-const items: Item[] = [
+export const items: Item[] = [
   {
     id: "101",
     name: "Elder Wand",
@@ -54,5 +58,51 @@ const items: Item[] = [
 ]
 
 export const itemsService = {
-  getAllItems: (): Item[] => items,
+  getAllItems: async (): Promise<Item[]> => {
+    const command = new ScanCommand({
+      TableName: "Items",
+    })
+
+    const data = await client.send(command)
+
+    if (data.Items) {
+      return unmarshallDataFromDB(data) as Item[]
+    } else {
+      return []
+    }
+  },
+
+  getItemById: async (id: string): Promise<Item | undefined> => {
+    const command = new ScanCommand({
+      TableName: "Items",
+      FilterExpression: "id = :id",
+      ExpressionAttributeValues: {
+        ":id": { S: id },
+      },
+    })
+    const data = await client.send(command)
+
+    console.log(data)
+
+    if (data.Items && data.Items?.length > 0) {
+      return unmarshallDataFromDB(data) as Item
+    } else {
+      return undefined
+    }
+  },
+
+  updateItemById: (id: string, updatedItemFromRequest: Partial<Item>): Item => {
+    const itemToUpdate = items.find((item) => item.id === id)
+    if (!itemToUpdate) throw new Error(`Item with ID ${id} not found`)
+    const updatedItem = { ...itemToUpdate, ...updatedItemFromRequest }
+    items.map((item) => (item.id === id ? updatedItem : item))
+    return updatedItem
+  },
+
+  createItem: (newItem: Item): Item => {
+    newItem.id = "106"
+    newItem.approval_status = "Pending"
+    items.push(newItem)
+    return newItem
+  },
 }
