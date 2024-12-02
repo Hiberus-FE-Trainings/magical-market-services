@@ -1,4 +1,4 @@
-import { House, HousesKeys, MageFromRequest, NewMageEntry } from "../types.ts";
+import { House, HousesKeys, Mage, MageFromRequest, NewMageEntry } from "../types.ts";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -36,4 +36,15 @@ export const toNewMageEntry = (mageFromRequest: MageFromRequest) => {
   };
 
   return newMage;
+};
+
+export const toUpdatedMageEntry = (mageFromRequest: Partial<MageFromRequest>, mageToBeUpdated: Mage) => {
+  const { name, email, house } = mageFromRequest;
+  const updatedMage: Mage = {
+    ...mageToBeUpdated,
+    name: name ? parseString(name, "name") : mageToBeUpdated.name,
+    email: email ? parseEmail(email) : mageToBeUpdated.email,
+    house: house ? parseHouseName(house) : mageToBeUpdated.house,
+  };
+  return updatedMage;
 };

@@ -6,11 +6,12 @@ export const magesController = {
   getAllMages: (ctx: Context) => {
     const mages = magesService.getMages();
 
+    ctx.response.status = 200;
     ctx.response.body = mages;
   },
 
   getMage: (ctx: Context & ContextWithParams) => {
-    const mageId = ctx.params.id ? parseInt(ctx.params.id) : 0;
+    const mageId = ctx.params.id;
 
     const mage = magesService.getMageById(mageId);
 
@@ -20,6 +21,7 @@ export const magesController = {
       return;
     }
 
+    ctx.response.status = 200;
     ctx.response.body = mage;
   },
 
@@ -30,6 +32,20 @@ export const magesController = {
 
       ctx.response.status = 201;
       ctx.response.body = newMage;
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = { message: `${error}` };
+      return;
+    }
+  },
+  updateMage: async (ctx: Context & ContextWithParams) => {
+    try {
+      const mageId = ctx.params.id;
+      const body = ctx.request.body();
+      const updatedMage = magesService.updateMageById(await body.value, mageId);
+
+      ctx.response.status = 200;
+      ctx.response.body = updatedMage;
     } catch (error) {
       ctx.response.status = 400;
       ctx.response.body = { message: `${error}` };

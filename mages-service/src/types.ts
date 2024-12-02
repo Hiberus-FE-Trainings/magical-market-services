@@ -1,5 +1,5 @@
 export type Mage = {
-  id: number;
+  id: string;
   name: string;
   email: string;
   roles: string[];
@@ -8,10 +8,7 @@ export type Mage = {
   magic_level: number;
 };
 
-export type NewMageEntry = Omit<
-  Mage,
-  "id" | "roles" | "balance" | "magic_level"
->;
+export type NewMageEntry = Omit<Mage, "id" | "roles" | "balance" | "magic_level">;
 
 export type MageFromRequest = {
   name: string;
@@ -23,11 +20,6 @@ export type ContextWithParams = {
   params: { [key: string]: string | undefined };
 };
 
-export const HousesKeys = [
-  "Gryffindor",
-  "Slytherin",
-  "Hufflepuff",
-  "Ravenclaw",
-] as const;
+export const HousesKeys = ["Gryffindor", "Slytherin", "Hufflepuff", "Ravenclaw"] as const;
 
 export type House = (typeof HousesKeys)[number];
