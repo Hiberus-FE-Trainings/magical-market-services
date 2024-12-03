@@ -58,20 +58,15 @@ export const itemController = {
   },
 
   createItem: async (ctx: Context) => {
-    const body = await ctx.request.body().value;
-    console.log(body);
+    try {
+      const body = await ctx.request.body().value;
+      const newItem = await itemsService.createItem(body);
 
-    if (!body) {
+      ctx.response.status = 201;
+      ctx.response.body = newItem;
+    } catch (error) {
       ctx.response.status = 400;
-      ctx.response.body = {
-        message: "Invalid data to update, data must be in JSON format",
-      };
-      return;
+      ctx.response.body = { message: `${error}` };
     }
-
-    const newItem = itemsService.createItem(body);
-
-    ctx.response.status = 201;
-    ctx.response.body = newItem;
   },
 };

@@ -10,7 +10,6 @@ export type Item = {
 };
 
 export const ITEM_KEYS: (keyof Item)[] = [
-  "id",
   "name",
   "description",
   "category",

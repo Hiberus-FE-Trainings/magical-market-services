@@ -1,9 +1,17 @@
 import { Item } from "../types.ts";
 import { client } from "../db/index.ts";
-import { ScanCommand, UpdateItemCommand } from "client-dynamodb";
+import {
+  PutItemCommand,
+  ScanCommand,
+  UpdateItemCommand,
+} from "client-dynamodb";
 import { marshall, unmarshall } from "util-dynamodb";
 import { unmarshallDataFromDB } from "../utils/utils.ts";
-import { validateItemFromRequest } from "../utils/validators.ts";
+import {
+  validateItemFromRequest,
+  validateNewItemFromRequest,
+} from "../utils/validators.ts";
+import { v1 } from "uuid";
 
 export const itemsService = {
   getAllItems: async (): Promise<Item[]> => {
@@ -37,16 +45,22 @@ export const itemsService = {
     }
   },
 
-  updateItemById: async (id: string, updatedItemFromRequest: Partial<Item>): Promise<Item | undefined> => {
+  updateItemById: async (
+    id: string,
+    updatedItemFromRequest: Partial<Item>
+  ): Promise<Item | undefined> => {
     const validAttributes = validateItemFromRequest(updatedItemFromRequest);
-    if (validAttributes.UpdateExpression.length === 0) throw new Error(`Failed to update item with id:${id}`);
+    if (validAttributes.UpdateExpression.length === 0)
+      throw new Error(`Failed to update item with id:${id}`);
 
     const command = new UpdateItemCommand({
       TableName: "Items",
       Key: { id: { S: id } },
       UpdateExpression: `SET ${validAttributes.UpdateExpression.join(", ")}`,
       ExpressionAttributeNames: validAttributes.ExpressionAttributeNames,
-      ExpressionAttributeValues: marshall(validAttributes.ExpressionAttributeValues),
+      ExpressionAttributeValues: marshall(
+        validAttributes.ExpressionAttributeValues
+      ),
       ReturnValues: "ALL_NEW",
     });
 
@@ -55,10 +69,19 @@ export const itemsService = {
     return unmarshall(data.Attributes ?? {}) as Item;
   },
 
-  createItem: (newItem: Item): Item => {
-    newItem.id = "106";
-    newItem.approval_status = "Pending";
-    items.push(newItem);
-    return newItem;
+  createItem: async (newItemFromRequest: Item): Promise<Item> => {
+    const newItem = marshall({
+      ...validateNewItemFromRequest(newItemFromRequest),
+      id: `${v1.generate()}`,
+    });
+
+    const command = new PutItemCommand({
+      TableName: "Items",
+      Item: newItem,
+      ReturnValues: "NONE",
+    });
+
+    await client.send(command);
+    return unmarshall(newItem ?? {}) as Item;
   },
 };
