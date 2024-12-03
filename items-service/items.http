@@ -1,0 +1,8 @@
+@api = http://localhost:8000
+
+DELETE {{api}}/items/a15b3a00-b15d-11ef-9cc2-19bd37a90626
+Content-Type: application/json
+
+###
+
+GET  {{api}}/items
