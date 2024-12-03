@@ -1,5 +1,5 @@
-import { Application } from "oak/mod.ts";
-import magesRouter from "./routes/magesRouter.ts";
+import { Application } from 'oak/mod.ts';
+import magesRouter from './routes/magesRouter.ts';
 
 const app = new Application();
 

@@ -5,6 +5,16 @@ Content-Type: application/json
 
 {
     "name": "Harry Potter",
-    "email": "harry.potter@hogwarts",
+    "email": "aaaa@hogwarts.com",
+    "house": "Ravenclaw"
+};
+
+
+PUT {{api}}/mages/2
+Content-Type: application/json
+
+{
+    "name": "Harry Potter",
+    "email": "aaaa@hogwarts.com",
     "house": "Ravenclaw"
 }
