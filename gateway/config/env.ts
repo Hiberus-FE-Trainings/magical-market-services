@@ -1,11 +1,11 @@
-import { config } from "https://deno.land/x/dotenv@v3.2.2/mod.ts";
+import { config } from "dotenv"
 
-const env = config();
+const env = config()
 
-console.log(env);
 export const ENV = {
-  PORT: Deno.env.get("PORT") || env.PORT,
-  MONGO_URI: Deno.env.get("MONGO_URI") || env.MONGO_URI,
-  HOUSES_URL: Deno.env.get("HOUSES_URL") || env.HOUSES_URL,
-  MAGES_URL: Deno.env.get("MAGES_URL") || env.MAGES_URL,
-};
+  PORT: env.PORT || "",
+  AWS_ACCESS_KEY_ID: env.AWS_ACCESS_KEY_ID || "",
+  AWS_SECRET_ACCESS_KEY: env.AWS_SECRET_ACCESS_KEY || "",
+  MAGES_URL: env.MAGES_URL || "",
+  ITEMS_URL: env.ITEMS_URL || "",
+}

@@ -1,18 +1,11 @@
-import { Router } from "oak/mod.ts";
-import { generateTokenController } from "../controllers/authController.ts";
+import { Router } from "oak/mod.ts"
+import { generateTokenController } from "../controllers/authController.ts"
+import { tradeController } from "../controllers/tradeController.ts"
 
-const gatewayRouter = new Router();
+const gatewayRouter = new Router()
 
-// gatewayRouter.get("/items", itemController.getAllItems);
+gatewayRouter.post("/generateToken", generateTokenController.generateToken)
 
-// gatewayRouter.get("/items/:id", itemController.getItemById);
+gatewayRouter.post("/trade", tradeController.tradeItem)
 
-// gatewayRouter.put("/items/:id", itemController.updateItemById);
-
-// gatewayRouter.post("/items", itemController.createItem);
-
-// gatewayRouter.delete("/items/:id", itemController.deleteItem);
-
-gatewayRouter.post("/generateToken", generateTokenController.generateToken);
-
-export default gatewayRouter;
+export default gatewayRouter
