@@ -2,7 +2,6 @@ import { config } from "https://deno.land/x/dotenv@v3.2.2/mod.ts";
 
 const env = config();
 
-console.log("env from .env");
 console.log(env);
 export const ENV = {
   PORT: Deno.env.get("PORT") || env.PORT,

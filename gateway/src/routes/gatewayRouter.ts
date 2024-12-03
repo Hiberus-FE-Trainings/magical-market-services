@@ -1,17 +1,22 @@
-import { Router } from "oak/mod.ts";
+import { Context, Router } from "oak/mod.ts";
+import { generateTokenController } from "../controllers/gatewayController.ts";
 
 const gatewayRouter = new Router();
 
-gatewayRouter.get("/items", itemController.getAllItems);
+// gatewayRouter.get("/items", itemController.getAllItems);
 
-gatewayRouter.get("/items/:id", itemController.getItemById);
+gatewayRouter.get("/test", (ctx: Context) => {
+  ctx.response.body = "hola";
+});
 
-gatewayRouter.put("/items/:id", itemController.updateItemById);
+// gatewayRouter.get("/items/:id", itemController.getItemById);
 
-gatewayRouter.post("/items", itemController.createItem);
+// gatewayRouter.put("/items/:id", itemController.updateItemById);
 
-gatewayRouter.delete("/items/:id", itemController.deleteItem);
+// gatewayRouter.post("/items", itemController.createItem);
 
-gatewayRouter.get("/items/category/:category", itemController.getItemsByCategory);
+// gatewayRouter.delete("/items/:id", itemController.deleteItem);
+
+gatewayRouter.post("/generateToken", generateTokenController.generateToken);
 
 export default gatewayRouter;
