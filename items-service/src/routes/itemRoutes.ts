@@ -13,8 +13,6 @@ router.post("/items", itemController.createItem);
 
 router.delete("/items/:id", itemController.deleteItem);
 
-//Get by approval status
-
-//Get by category
+router.get("/items/category/:category", itemController.getItemsByCategory);
 
 export default router;

@@ -41,7 +41,17 @@ export const itemController = {
 
     ctx.response.body = item;
   },
-
+  getItemsByCategory: async (ctx: Context & ContextWithParams) => {
+    try {
+      const category = ctx.params.category ?? "";
+      const items = await itemsService.getItemsByCategory(category);
+      ctx.response.status = 200;
+      ctx.response.body = items;
+    } catch (error) {
+      ctx.response.status = 400;
+      ctx.response.body = { message: `${error}` };
+    }
+  },
   updateItemById: async (ctx: Context & ContextWithParams) => {
     try {
       const id = ctx.params.id ?? "";
@@ -56,7 +66,6 @@ export const itemController = {
       ctx.response.body = { message: `${error}` };
     }
   },
-
   createItem: async (ctx: Context) => {
     try {
       const body = await ctx.request.body().value;
@@ -69,7 +78,6 @@ export const itemController = {
       ctx.response.body = { message: `${error}` };
     }
   },
-
   deleteItem: async (ctx: Context & ContextWithParams) => {
     try {
       const id = ctx.params.id ?? "";
@@ -77,7 +85,7 @@ export const itemController = {
       await itemsService.deleteItemById(id);
 
       ctx.response.status = 200;
-      ctx.response.body =  {Item: `${id} has been deleted succesfully`};
+      ctx.response.body = { Item: `${id} has been deleted succesfully` };
     } catch (error) {
       ctx.response.status = 404;
       ctx.response.body = { message: `${error}` };

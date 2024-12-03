@@ -1,17 +1,9 @@
 import { Item } from "../types.ts";
 import { client } from "../db/index.ts";
-import {
-  DeleteItemCommand,
-  PutItemCommand,
-  ScanCommand,
-  UpdateItemCommand,
-} from "client-dynamodb";
+import { DeleteItemCommand, PutItemCommand, ScanCommand, UpdateItemCommand } from "client-dynamodb";
 import { marshall, unmarshall } from "util-dynamodb";
 import { unmarshallDataFromDB } from "../utils/utils.ts";
-import {
-  validateItemFromRequest,
-  validateNewItemFromRequest,
-} from "../utils/validators.ts";
+import { validateItemFromRequest, validateNewItemFromRequest } from "../utils/validators.ts";
 import { v1 } from "uuid";
 
 export const itemsService = {
@@ -45,11 +37,19 @@ export const itemsService = {
       return undefined;
     }
   },
+  getItemsByCategory: async (category: string): Promise<Item[]> => {
+    const command = new ScanCommand({
+      TableName: "Items",
+      FilterExpression: "category = :category",
+      ExpressionAttributeValues: {
+        ":category": { S: category },
+      },
+    });
+    const data = await client.send(command);
 
-  updateItemById: async (
-    id: string,
-    updatedItemFromRequest: Partial<Item>,
-  ): Promise<Item | undefined> => {
+    return data.Items ? (data.Items.map((item) => unmarshall(item)) as Item[]) : [];
+  },
+  updateItemById: async (id: string, updatedItemFromRequest: Partial<Item>): Promise<Item | undefined> => {
     const validAttributes = validateItemFromRequest(updatedItemFromRequest);
     if (validAttributes.UpdateExpression.length === 0) {
       throw new Error(`Failed to update item with id:${id}`);
@@ -60,9 +60,7 @@ export const itemsService = {
       Key: { id: { S: id } },
       UpdateExpression: `SET ${validAttributes.UpdateExpression.join(", ")}`,
       ExpressionAttributeNames: validAttributes.ExpressionAttributeNames,
-      ExpressionAttributeValues: marshall(
-        validAttributes.ExpressionAttributeValues,
-      ),
+      ExpressionAttributeValues: marshall(validAttributes.ExpressionAttributeValues),
       ReturnValues: "ALL_NEW",
     });
 
@@ -93,14 +91,14 @@ export const itemsService = {
       Key: {
         id: { S: id },
       },
-      ConditionExpression: 'attribute_exists(id)'
+      ConditionExpression: "attribute_exists(id)",
     });
 
     try {
       await client.send(command);
-    // deno-lint-ignore no-explicit-any
+      // deno-lint-ignore no-explicit-any
     } catch (error: any) {
-      if(error.name === "ConditionalCheckFailedException") throw new Error(`Could not find item by id ${id}`)
+      if (error.name === "ConditionalCheckFailedException") throw new Error(`Could not find item by id ${id}`);
     }
   },
 };
