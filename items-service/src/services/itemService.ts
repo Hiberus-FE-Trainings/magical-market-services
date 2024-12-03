@@ -1,6 +1,7 @@
 import { Item } from "../types.ts";
 import { client } from "../db/index.ts";
 import {
+  DeleteItemCommand,
   PutItemCommand,
   ScanCommand,
   UpdateItemCommand,
@@ -47,11 +48,12 @@ export const itemsService = {
 
   updateItemById: async (
     id: string,
-    updatedItemFromRequest: Partial<Item>
+    updatedItemFromRequest: Partial<Item>,
   ): Promise<Item | undefined> => {
     const validAttributes = validateItemFromRequest(updatedItemFromRequest);
-    if (validAttributes.UpdateExpression.length === 0)
+    if (validAttributes.UpdateExpression.length === 0) {
       throw new Error(`Failed to update item with id:${id}`);
+    }
 
     const command = new UpdateItemCommand({
       TableName: "Items",
@@ -59,7 +61,7 @@ export const itemsService = {
       UpdateExpression: `SET ${validAttributes.UpdateExpression.join(", ")}`,
       ExpressionAttributeNames: validAttributes.ExpressionAttributeNames,
       ExpressionAttributeValues: marshall(
-        validAttributes.ExpressionAttributeValues
+        validAttributes.ExpressionAttributeValues,
       ),
       ReturnValues: "ALL_NEW",
     });
@@ -83,5 +85,22 @@ export const itemsService = {
 
     await client.send(command);
     return unmarshall(newItem ?? {}) as Item;
+  },
+
+  deleteItemById: async (id: string) => {
+    const command = new DeleteItemCommand({
+      TableName: "Items",
+      Key: {
+        id: { S: id },
+      },
+      ConditionExpression: 'attribute_exists(id)'
+    });
+
+    try {
+      await client.send(command);
+    // deno-lint-ignore no-explicit-any
+    } catch (error: any) {
+      if(error.name === "ConditionalCheckFailedException") throw new Error(`Could not find item by id ${id}`)
+    }
   },
 };

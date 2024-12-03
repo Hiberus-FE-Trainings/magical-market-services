@@ -11,7 +11,7 @@ router.put("/items/:id", itemController.updateItemById);
 
 router.post("/items", itemController.createItem);
 
-//Delete
+router.delete("/items/:id", itemController.deleteItem);
 
 //Get by approval status
 

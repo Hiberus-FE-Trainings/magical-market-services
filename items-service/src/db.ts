@@ -1,4 +1,4 @@
-import { Item } from "./types.ts"
+import { Item } from "./types.ts";
 
 export const items: Item[] = [
   {
@@ -51,4 +51,4 @@ export const items: Item[] = [
     image_url: "images/wands/regal_black.webp",
     seller_id: 2,
   },
-]
+];

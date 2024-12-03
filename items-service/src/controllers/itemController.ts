@@ -69,4 +69,18 @@ export const itemController = {
       ctx.response.body = { message: `${error}` };
     }
   },
+
+  deleteItem: async (ctx: Context & ContextWithParams) => {
+    try {
+      const id = ctx.params.id ?? "";
+
+      await itemsService.deleteItemById(id);
+
+      ctx.response.status = 200;
+      ctx.response.body =  {Item: `${id} has been deleted succesfully`};
+    } catch (error) {
+      ctx.response.status = 404;
+      ctx.response.body = { message: `${error}` };
+    }
+  },
 };
