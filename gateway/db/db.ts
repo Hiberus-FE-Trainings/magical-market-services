@@ -1,5 +1,5 @@
-import { DynamoDBClient } from "dynamodb";
-import { ENV } from "../../config/env.ts";
+import { DynamoDBClient } from "client-dynamodb";
+import { ENV } from "../config/env.ts";
 
 const DynamodbClient = new DynamoDBClient({
   region: "eu-central-1",
