@@ -21,6 +21,7 @@ export const authController = {
       if (loginResponse.success) {
         const { success, email, token } = loginResponse;
         ctx.response.status = 200;
+        ctx.cookies.set("authToken", token);
         ctx.response.body = { token, email, success };
       } else {
         const { success, errorMessage } = loginResponse;
