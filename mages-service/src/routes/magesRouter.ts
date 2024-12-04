@@ -5,6 +5,7 @@ const magesRouter = new Router();
 
 magesRouter.get("/mages", magesController.getAllMages);
 magesRouter.get("/mages/:id", magesController.getMage);
+magesRouter.get("/mages/email/:email", magesController.getMageByEmail);
 
 magesRouter.post("/mages", magesController.createMage);
 magesRouter.put("/mages/:id", magesController.updateMage);
