@@ -1,11 +1,11 @@
-import { config } from "dotenv"
+import { config } from "dotenv";
 
-const env = config()
+const env = config();
 
 export const ENV = {
-  PORT: env.PORT || "",
-  AWS_ACCESS_KEY_ID: env.AWS_ACCESS_KEY_ID || "",
-  AWS_SECRET_ACCESS_KEY: env.AWS_SECRET_ACCESS_KEY || "",
-  MAGES_URL: env.MAGES_URL || "",
-  ITEMS_URL: env.ITEMS_URL || "",
-}
+  PORT: Deno.env.get("PORT") || env.PORT,
+  AWS_ACCESS_KEY_ID: Deno.env.get("AWS_ACCESS_KEY_ID") || env.PORT,
+  AWS_SECRET_ACCESS_KEY: Deno.env.get("AWS_SECRET_ACCESS_KEY") || env.PORT,
+  MAGES_URL: Deno.env.get("MAGES_URL") || env.PORT,
+  ITEMS_URL: Deno.env.get("ITEMS_URL") || env.PORT,
+};

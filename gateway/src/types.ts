@@ -17,3 +17,6 @@ export type LoginResponse =
       success: false;
       errorMessage: string;
     };
+export type ContextWithParams = {
+  params: { [key: string]: string | undefined };
+};
