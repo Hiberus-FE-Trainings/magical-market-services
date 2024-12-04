@@ -1,6 +1,7 @@
 import { DeleteItemCommand, PutItemCommand, ScanCommand, UpdateItemCommand } from "dynamodb";
 import { marshall } from "dynamodbUtil";
 import { v1 } from "uuid";
+import { hash } from "bcrypt";
 import { Mage, MageFromRequest } from "../types.ts";
 import { toNewMageEntry } from "../validations/validations.ts";
 import DynamodbClient from "../db/db.ts";
@@ -72,9 +73,14 @@ export const magesService = {
       ...toNewMageEntry(mage),
     };
 
+    const newMageWithPassword = {
+      ...newMage,
+      password: await hash(mage.password),
+    };
+
     const command = new PutItemCommand({
       TableName: "Mages",
-      Item: marshall(newMage),
+      Item: marshall(newMageWithPassword),
       ReturnValues: "NONE",
       ConditionExpression: "attribute_not_exists(id)",
     });
