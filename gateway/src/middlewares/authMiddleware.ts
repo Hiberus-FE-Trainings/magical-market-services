@@ -2,11 +2,8 @@ import { Context } from "oak/mod.ts";
 import { verify } from "djwt/mod.ts";
 import { generateKey } from "../utils/auth.ts";
 
-export const authMiddleware = async (
-  ctx: Context,
-  next: () => Promise<unknown>
-) => {
-  const excludedRoutes = ["/generateToken"];
+export const authMiddleware = async (ctx: Context, next: () => Promise<unknown>) => {
+  const excludedRoutes = ["/login"];
 
   if (excludedRoutes.includes(ctx.request.url.pathname)) {
     await next();
