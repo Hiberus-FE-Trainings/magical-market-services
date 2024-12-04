@@ -1,5 +1,5 @@
 import { Context } from "oak/mod.ts";
-import { authService } from "../services/gatewayService.ts";
+import { authService } from "../services/authService.ts";
 
 export const generateTokenController = {
   generateToken: async (ctx: Context) => {
