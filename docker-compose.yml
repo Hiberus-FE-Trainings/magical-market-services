@@ -2,30 +2,40 @@ services:
   gateway:
     build:
       context: ./gateway
-    ports: 
+    ports:
       - "8000:8000"
     env_file:
       - ./gateway/.env
     environment:
       - ITEMS_URL=http://items:8001/items
       - MAGES_URL=http://mages:8002/mages
+      - MAGES_URL=http://mages:8003/categories
     depends_on:
-    # - dynamodb 
+      # - dynamodb
       - items
       - mages
-  
+      - categories
+
   items:
     build:
       context: ./items-service
-    ports: 
+    ports:
       - "8001:8001"
     env_file:
       - ./items-service/.env
-  
+
   mages:
     build:
       context: ./mages-service
-    ports: 
+    ports:
       - "8002:8002"
     env_file:
       - ./mages-service/.env
+
+  categories:
+    build:
+      context: ./categories-service
+    ports:
+      - "8003:8003"
+    env_file:
+      - ./categories-service/.env

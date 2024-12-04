@@ -1,9 +1,17 @@
 import { Item } from "../types.ts";
 import { client } from "../db/index.ts";
-import { DeleteItemCommand, PutItemCommand, ScanCommand, UpdateItemCommand } from "client-dynamodb";
+import {
+  DeleteItemCommand,
+  PutItemCommand,
+  ScanCommand,
+  UpdateItemCommand,
+} from "client-dynamodb";
 import { marshall, unmarshall } from "util-dynamodb";
 import { unmarshallDataFromDB } from "../utils/utils.ts";
-import { validateItemFromRequest, validateNewItemFromRequest } from "../utils/validators.ts";
+import {
+  validateItemFromRequest,
+  validateNewItemFromRequest,
+} from "../utils/validators.ts";
 import { v1 } from "uuid";
 
 export const itemsService = {
@@ -13,7 +21,6 @@ export const itemsService = {
     });
 
     const data = await client.send(command);
-
     if (data.Items) {
       return unmarshallDataFromDB(data) as Item[];
     } else {
@@ -47,9 +54,14 @@ export const itemsService = {
     });
     const data = await client.send(command);
 
-    return data.Items ? (data.Items.map((item) => unmarshall(item)) as Item[]) : [];
+    return data.Items
+      ? (data.Items.map((item) => unmarshall(item)) as Item[])
+      : [];
   },
-  updateItemById: async (id: string, updatedItemFromRequest: Partial<Item>): Promise<Item | undefined> => {
+  updateItemById: async (
+    id: string,
+    updatedItemFromRequest: Partial<Item>
+  ): Promise<Item | undefined> => {
     const validAttributes = validateItemFromRequest(updatedItemFromRequest);
     if (validAttributes.UpdateExpression.length === 0) {
       throw new Error(`Failed to update item with id:${id}`);
@@ -60,7 +72,9 @@ export const itemsService = {
       Key: { id: { S: id } },
       UpdateExpression: `SET ${validAttributes.UpdateExpression.join(", ")}`,
       ExpressionAttributeNames: validAttributes.ExpressionAttributeNames,
-      ExpressionAttributeValues: marshall(validAttributes.ExpressionAttributeValues),
+      ExpressionAttributeValues: marshall(
+        validAttributes.ExpressionAttributeValues
+      ),
       ReturnValues: "ALL_NEW",
     });
 

@@ -5,6 +5,7 @@ export const authController = {
   login: async (ctx: Context) => {
     try {
       const { mageEmail, magePassword } = await ctx.request.body().value;
+      console.log(mageEmail, magePassword);
 
       const loginResponse = await authService.login(mageEmail, magePassword);
       if (loginResponse.success) {
