@@ -10,6 +10,8 @@ gatewayRouter.get("/items", itemsController.getAllItems);
 
 gatewayRouter.get("/items/:id", itemsController.getItemById);
 
+gatewayRouter.get("/items/category/:category", itemsController.getItemsByCategory);
+
 gatewayRouter.get("/mages", magesController.getAllMages);
 
 gatewayRouter.get("/mages/:id", magesController.getMageById);

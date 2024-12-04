@@ -13,4 +13,10 @@ export const itemsController = {
     const response = await fetch(`${ENV.ITEMS_URL}/${id}`);
     ctx.response.body = await response.json();
   },
+
+  getItemsByCategory: async (ctx: Context & ContextWithParams) => {
+    const category = ctx.params.category;
+    const response = await fetch(`${ENV.ITEMS_URL}/category/${category}`);
+    ctx.response.body = await response.json();
+  },
 };
