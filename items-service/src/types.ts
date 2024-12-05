@@ -7,6 +7,7 @@ export type Item = {
   approval_status: "Pending" | "Approved" | "Rejected";
   image_url: string;
   seller_id: number;
+  seller_name: string;
 };
 
 export const ITEM_KEYS: (keyof Item)[] = [

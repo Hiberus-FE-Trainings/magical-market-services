@@ -34,8 +34,8 @@ services:
 
   categories:
     build:
-      context: ./categories-service
+      context: ./category-service
     ports:
       - "8003:8003"
     env_file:
-      - ./categories-service/.env
+      - ./category-service/.env
